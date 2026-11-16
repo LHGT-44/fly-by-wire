@@ -443,10 +443,10 @@
         Comment le remplacement des liaisons mécaniques directes par des calculateurs numériques redondants a révolutionné la sécurité, l'aérodynamique et le pilotage des avions commerciaux.
       </p>
       <div class="meta-bar">
-        <span><strong>Étudiant :</strong> Alexandre Martin (Exemple)</span>
-        <span><strong>Groupe :</strong> TD04</span>
+        <span><strong>Étudiant :</strong> GUICHARDAZ Théo</span>
+        <span><strong>Groupe :</strong> TD09</span>
         <span><strong>Domaine :</strong> Aéronautique</span>
-        <span><strong>Année :</strong> 1re année — IPSA Ivry (2026)</span>
+        <span><strong>Année :</strong> Aéro 1</span>
       </div>
     </header>
 
@@ -458,7 +458,7 @@
         Depuis les pionniers de l'aviation jusqu'aux années 1970, le pilotage d'un avion reposait sur un principe purement mécanique : chaque mouvement du manche ou du palonnier actionnait un réseau complexe de câbles d'acier, de poulies et de bielles courant tout au long du fuselage pour braquer directement les gouvernes. Avec l'augmentation de la taille et de la vitesse des avions de ligne, les efforts aérodynamiques sur les gouvernes sont devenus trop importants pour la seule force musculaire du pilote, imposant l'ajout de servocommandes hydrauliques. Toutefois, la liaison entre le cockpit et l'empennage restait fondamentalement mécanique.
       </p>
       <p>
-        Une première rupture apparaît en <strong>1969 avec le Concorde</strong>, premier avion civil équipé de commandes de vol électriques, mais encore de technologie <em>analogique</em> et doublées d'un secours mécanique complet. Le véritable basculement s'opère le <strong>22 février 1987</strong> lors du premier vol de l'<strong>Airbus A320</strong> (mis en service commercial en 1988). Sous l'impulsion d'ingénieurs comme Bernard Ziegler, l'A320 devient le premier avion de ligne civil au monde doté de commandes de vol électriques (CDVE) <strong>entièrement numériques</strong>, supprimant toute tringlerie mécanique pour les gouvernes principales et remplaçant le manche central traditionnel par un mini-manche latéral (<em>sidestick</em>).
+        Une première rupture apparaît en 1969 avec le Concorde, premier avion civil équipé de commandes de vol électriques, mais encore de technologie analogique et doublées d'un secours mécanique complet. Le véritable basculement s'opère le 22 février 1987 lors du premier vol de l'Airbus A320 (mis en service commercial en 1988). Sous l'impulsion d'ingénieurs comme Bernard Ziegler, l'A320 devient le premier avion de ligne civil au monde doté de commandes de vol électriques (CDVE) entièrement numériques, supprimant toute tringlerie mécanique pour les gouvernes principales et remplaçant le manche central traditionnel par un mini-manche latéral (sidestick).
       </p>
 
       <div class="timeline">
@@ -486,7 +486,7 @@
       <span class="sec-num">02 / FONCTIONNEMENT TECHNIQUE</span>
       <h2>La chaîne de commande numérique et les lois de pilotage</h2>
       <p>
-        Dans un système <em>Fly-by-Wire</em> moderne, le pilote ne commande plus directement l'angle de braquage d'une surface mobile : il exprime une <strong>intention de trajectoire</strong>. Les calculateurs mesurent en temps réel l'état de l'appareil (vitesse, incidence, facteur de charge, assiette) et calculent le braquage nécessaire des gouvernes pour exécuter cet ordre tout en maintenant l'avion dans son domaine de vol sûr.
+        Dans un système <em>Fly-by-Wire</em> moderne, le pilote ne commande plus directement l'angle de braquage d'une surface mobile : il exprime une intention de trajectoire. Les calculateurs mesurent en temps réel l'état de l'appareil (vitesse, incidence, facteur de charge, assiette) et calculent le braquage nécessaire des gouvernes pour exécuter cet ordre tout en maintenant l'avion dans son domaine de vol sûr.
       </p>
 
       <!-- Schéma SVG de la boucle de commande -->
@@ -535,7 +535,7 @@
         <p class="diagram-caption">Architecture simplifiée d'une boucle fermée de commandes de vol électriques numériques sur Airbus A320.</p>
       </div>
 
-      <p>Clique sur chaque étape ci-dessous pour inspecter le rôle technique de chaque composant :</p>
+      <p>Cliquez sur les différentes étapes :</p>
       <div class="chain-steps">
         <button class="step-btn active" onclick="showStep(0, this)">
           <strong>1. Mini-manche</strong>
@@ -560,7 +560,7 @@
 
       <h3>Sûreté de fonctionnement : redondance et lois dégradées</h3>
       <p>
-        Pour atteindre un taux de défaillance catastrophique inférieur à 10<sup>-9</sup> par heure de vol exigé par la certification aéronautique, l'Airbus A320 repose sur une <strong>redondance dissemblable</strong>. Cinq calculateurs principaux se partagent les commandes : <strong>2 ELAC</strong> (<em>Elevator Aileron Computer</em>) et <strong>3 SEC</strong> (<em>Spoiler Elevator Computer</em>), conçus avec des processeurs et des logiciels développés par des équipes distinctes afin d'éliminer tout risque de bogue commun. En cas de perte de certains capteurs ou calculateurs, le système bascule progressivement de la <strong>Normal Law</strong> (protections complètes) vers l'<strong>Alternate Law</strong>, puis la <strong>Direct Law</strong> (braquage proportionnel au manche, sans protection), garantissant toujours le contrôle de l'appareil.
+        Pour atteindre un taux de défaillance catastrophique inférieur à 10<sup>-9</sup> par heure de vol exigé par la certification aéronautique, l'Airbus A320 repose sur une redondance dissemblable. Cinq calculateurs principaux se partagent les commandes : 2 "ELAC" (Elevator Aileron Computer : pilotent la gouverne de profondeur [tangage] et les ailerons [roulis]) et 3 "SEC" (Spoiler Elevator Computer : pilotent les spoilers [sur les ailes] et servent de secours pour la gouverne de profondeur si les ELAC tombent en panne), conçus avec des processeurs et des logiciels développés par des équipes distinctes afin d'éliminer tout risque de bogue commun. En cas de perte de certains capteurs ou calculateurs, le système bascule progressivement de la Normal Law (protections complètes) vers l'Alternate Law, puis la Direct Law (braquage proportionnel au manche, sans protection), garantissant toujours le contrôle de l'appareil.
       </p>
 
       <div class="table-wrap">
