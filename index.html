@@ -586,7 +586,7 @@
             <tr>
               <td><strong>Protection domaine de vol</strong></td>
               <td>Aucune (alarmes sonores uniquement)</td>
-              <td>Active : limitation d'incidence ($lpha$), de <em>n<sub>z</sub></em>, de vitesse et d'inclinaison</td>
+              <td>Active : limitation d'incidence (<em>&alpha;</em>), de <em>n<sub>z</sub></em>, de vitesse et d'inclinaison</td>
             </tr>
             <tr>
               <td><strong>Compensateur (Trim)</strong></td>
@@ -781,8 +781,15 @@
       pitch += (targetPitch - pitch) * 0.1;
       roll += (targetRoll - roll) * 0.1;
 
-      const aoa = Math.max(-5, pitch * 0.62 + gust * 0.3);
-      const nz = 1 + (pitch / 18) + (Math.abs(roll) / 65);
+      let aoa = Math.max(-5, 2.5 + pitch * 0.55 + gust * 0.3);
+      const bankRad = (Math.min(Math.abs(roll), 75) * Math.PI) / 180;
+      const bankLoad = (1 / Math.cos(bankRad)) - 1;
+      let nz = 1 + (pitch / 22) + bankLoad * 0.95;
+
+      if (mode === 'fbw') {
+        aoa = Math.min(14.5, aoa);
+        nz = Math.max(-1.0, Math.min(2.5, nz));
+      }
 
       document.getElementById('aoaDisp').textContent = aoa.toFixed(1) + '°';
       document.getElementById('gDisp').textContent = nz.toFixed(2) + ' g';
