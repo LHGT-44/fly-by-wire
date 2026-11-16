@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aé111 — Le Fly-by-Wire et l'Airbus A320</title>
+  <style>
+    :root {
+      --bg: #090e1a;
+      --surface: #111827;
+      --surface-alt: #1a2438;
+      --border: #28354f;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --cyan: #38bdf8;
+      --blue: #60a5fa;
+      --green: #4ade80;
+      --amber: #fbbf24;
+      --red: #f87171;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* Navigation fixe */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 14, 26, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .nav-brand {
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--cyan);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-brand span {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 0.1rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--cyan);
+    }
+
+    /* Conteneur principal */
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    /* Couverture */
+    header.hero {
+      padding: 4.5rem 0 3.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 0.3rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+    h1 {
+      font-size: clamp(2.1rem, 4.2vw, 3.1rem);
+      line-height: 1.15;
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 780px;
+      margin-bottom: 2rem;
+    }
+    .meta-bar {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-size: 0.92rem;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.9rem 1.3rem;
+      border-radius: 10px;
+    }
+    .meta-bar strong { color: var(--text); }
+
+    /* Sections */
+    section {
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sec-num {
+      color: var(--cyan);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.25rem;
+      line-height: 1.25;
+    }
+    h3 {
+      font-size: 1.15rem;
+      color: var(--cyan);
+      margin-bottom: 0.5rem;
+    }
+    p { margin-bottom: 1.05rem; color: #e2e8f0; }
+
+    /* Grilles et cartes */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.1rem;
+      margin-top: 1.5rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.35rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px);
+    }
+    .card p:last-child { margin-bottom: 0; font-size: 0.95rem; color: var(--muted); }
+
+    /* Frise chronologique compacte */
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin: 1.75rem 0;
+    }
+    .tl-item {
+      background: var(--surface);
+      border-top: 3px solid var(--cyan);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+      padding: 1.1rem;
+      border-radius: 0 0 8px 8px;
+    }
+    .tl-year {
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--cyan);
+      font-size: 1.05rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .tl-item p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+
+    /* Schéma SVG d'architecture */
+    .diagram-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.75rem 0;
+      text-align: center;
+    }
+    .diagram-box svg {
+      width: 100%;
+      max-width: 860px;
+      height: auto;
+    }
+    .diagram-caption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      margin-bottom: 0;
+    }
+
+    /* Chaîne interactive de fonctionnement */
+    .chain-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 0.75rem;
+      margin: 1.5rem 0 1rem;
+    }
+    .step-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    .step-btn.active, .step-btn:hover {
+      border-color: var(--cyan);
+      background: var(--surface-alt);
+    }
+    .step-btn strong { display: block; color: var(--cyan); font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .step-btn span { font-size: 0.82rem; color: var(--muted); }
+    .step-detail {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--cyan);
+      padding: 1.25rem 1.4rem;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Tableau comparatif */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      font-size: 0.93rem;
+    }
+    th, td {
+      padding: 0.9rem 1.1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface-alt);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* Simulateur PFD */
+    .sim-wrapper {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.6rem;
+      margin-top: 1.5rem;
+    }
+    .mode-switch {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .mode-btn {
+      flex: 1;
+      min-width: 240px;
+      padding: 0.9rem 1rem;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-btn.active-mech {
+      border-color: var(--amber);
+      color: var(--amber);
+      background: rgba(251, 191, 36, 0.08);
+    }
+    .mode-btn.active-fbw {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(74, 222, 128, 0.08);
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.75rem;
+      align-items: center;
+    }
+    @media (max-width: 780px) {
+      .sim-grid { grid-template-columns: 1fr; }
+    }
+    canvas#pfdCanvas {
+      width: 100%;
+      max-width: 430px;
+      height: auto;
+      border-radius: 8px;
+      border: 2px solid #334155;
+      background: #000;
+      display: block;
+      margin: 0 auto;
+    }
+    .controls label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .controls input[type="range"] {
+      width: 100%;
+      margin-bottom: 1.15rem;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+    .action-btns {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+    .btn-small {
+      padding: 0.55rem 0.95rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-small:hover { border-color: var(--cyan); }
+    .btn-gust { border-color: var(--amber); color: var(--amber); }
+
+    .telemetry {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+    .telem-box {
+      background: var(--bg);
+      padding: 0.7rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .telem-box span { display: block; font-size: 0.75rem; color: var(--muted); }
+    .telem-box strong { font-size: 1.1rem; font-family: monospace; }
+
+    .status-banner {
+      padding: 0.9rem 1rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: rgba(74, 222, 128, 0.12);
+      border: 1px solid var(--green);
+      color: var(--green);
+      line-height: 1.45;
+    }
+    .status-banner.danger {
+      background: rgba(248, 113, 113, 0.14);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* Encadré personnel */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(17, 24, 39, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 1.6rem;
+      margin-top: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer p { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">IPSA • Aé111 <span>FLY-BY-WIRE</span></div>
+    <div class="nav-links">
+      <a href="#histoire">01. Histoire</a>
+      <a href="#technique">02. Architecture</a>
+      <a href="#simulateur">03. Simulateur</a>
+      <a href="#choix">04. Mon Choix</a>
+      <a href="#impact">05. Impact</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- COUVERTURE -->
+    <header class="hero">
+      <span class="badge">Travail Personnel Intermédiaire • Module Aé111</span>
+      <h1>Les Commandes de Vol Électriques (Fly-by-Wire) et l'Airbus A320</h1>
+      <p class="subtitle">
+        Comment le remplacement des liaisons mécaniques directes par des calculateurs numériques redondants a révolutionné la sécurité, l'aérodynamique et le pilotage des avions commerciaux.
+      </p>
+      <div class="meta-bar">
+        <span><strong>Étudiant :</strong> Alexandre Martin (Exemple)</span>
+        <span><strong>Groupe :</strong> TD04</span>
+        <span><strong>Domaine :</strong> Aéronautique</span>
+        <span><strong>Année :</strong> 1re année — IPSA Ivry (2026)</span>
+      </div>
+    </header>
+
+    <!-- 01. HISTOIRE -->
+    <section id="histoire">
+      <span class="sec-num">01 / CONTEXTE HISTORIQUE</span>
+      <h2>De la tringlerie mécanique au premier avion de ligne numérique</h2>
+      <p>
+        Depuis les pionniers de l'aviation jusqu'aux années 1970, le pilotage d'un avion reposait sur un principe purement mécanique : chaque mouvement du manche ou du palonnier actionnait un réseau complexe de câbles d'acier, de poulies et de bielles courant tout au long du fuselage pour braquer directement les gouvernes. Avec l'augmentation de la taille et de la vitesse des avions de ligne, les efforts aérodynamiques sur les gouvernes sont devenus trop importants pour la seule force musculaire du pilote, imposant l'ajout de servocommandes hydrauliques. Toutefois, la liaison entre le cockpit et l'empennage restait fondamentalement mécanique.
+      </p>
+      <p>
+        Une première rupture apparaît en <strong>1969 avec le Concorde</strong>, premier avion civil équipé de commandes de vol électriques, mais encore de technologie <em>analogique</em> et doublées d'un secours mécanique complet. Le véritable basculement s'opère le <strong>22 février 1987</strong> lors du premier vol de l'<strong>Airbus A320</strong> (mis en service commercial en 1988). Sous l'impulsion d'ingénieurs comme Bernard Ziegler, l'A320 devient le premier avion de ligne civil au monde doté de commandes de vol électriques (CDVE) <strong>entièrement numériques</strong>, supprimant toute tringlerie mécanique pour les gouvernes principales et remplaçant le manche central traditionnel par un mini-manche latéral (<em>sidestick</em>).
+      </p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <span class="tl-year">1903 – 1950</span>
+          <p>Commandes purement mécaniques (câbles et poulies) : liaison physique directe entre le pilote et les gouvernes.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1950 – 1970</span>
+          <p>Commandes hydro-mécaniques : l'hydraulique fournit la puissance, mais le câble pilote encore la valve.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1969 • Concorde</span>
+          <p>Premier avion civil à commandes électriques analogiques, avec secours mécanique conservé.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-year">1988 • Airbus A320</span>
+          <p>Premier avion de ligne à Fly-by-Wire numérique avec protection complète du domaine de vol.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. ARCHITECTURE TECHNIQUE -->
+    <section id="technique">
+      <span class="sec-num">02 / FONCTIONNEMENT TECHNIQUE</span>
+      <h2>La chaîne de commande numérique et les lois de pilotage</h2>
+      <p>
+        Dans un système <em>Fly-by-Wire</em> moderne, le pilote ne commande plus directement l'angle de braquage d'une surface mobile : il exprime une <strong>intention de trajectoire</strong>. Les calculateurs mesurent en temps réel l'état de l'appareil (vitesse, incidence, facteur de charge, assiette) et calculent le braquage nécessaire des gouvernes pour exécuter cet ordre tout en maintenant l'avion dans son domaine de vol sûr.
+      </p>
+
+      <!-- Schéma SVG de la boucle de commande -->
+      <div class="diagram-box">
+        <svg viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schéma de la boucle Fly-by-Wire Airbus A320">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+            </marker>
+            <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1 L 10 5 L 0 9 z" fill="#4ade80" />
+            </marker>
+          </defs>
+
+          <!-- Blocs principaux -->
+          <rect x="20" y="30" width="165" height="75" rx="8" fill="#1a2438" stroke="#38bdf8" stroke-width="2" />
+          <text x="102" y="60" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">1. MINI-MANCHE</text>
+          <text x="102" y="80" fill="#cbd5e1" font-size="11" text-anchor="middle">Capteurs inductifs (RVDT)</text>
+
+          <rect x="235" y="30" width="195" height="75" rx="8" fill="#1a2438" stroke="#38bdf8" stroke-width="2" />
+          <text x="332" y="58" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">2. CALCULATEURS</text>
+          <text x="332" y="77" fill="#cbd5e1" font-size="11" text-anchor="middle">2 ELAC + 3 SEC (Redondants)</text>
+          <text x="332" y="93" fill="#4ade80" font-size="10" text-anchor="middle">Lois de pilotage & Protections</text>
+
+          <rect x="480" y="30" width="175" height="75" rx="8" fill="#1a2438" stroke="#38bdf8" stroke-width="2" />
+          <text x="567" y="60" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">3. SERVOCOMMANDES</text>
+          <text x="567" y="80" fill="#cbd5e1" font-size="11" text-anchor="middle">3 circuits hydrauliques (V/B/J)</text>
+
+          <rect x="705" y="30" width="135" height="75" rx="8" fill="#1a2438" stroke="#38bdf8" stroke-width="2" />
+          <text x="772" y="60" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">4. GOUVERNES</text>
+          <text x="772" y="80" fill="#cbd5e1" font-size="11" text-anchor="middle">Ailerons, Profondeur</text>
+
+          <!-- Flèches directes -->
+          <line x1="185" y1="67" x2="230" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
+          <line x1="430" y1="67" x2="475" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
+          <line x1="655" y1="67" x2="700" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
+
+          <!-- Boucle de retour (Capteurs ADIRU) -->
+          <rect x="360" y="145" width="270" height="55" rx="8" fill="#111827" stroke="#4ade80" stroke-width="1.8" />
+          <text x="495" y="168" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle">5. CAPTEURS & CENTRALE ADIRU</text>
+          <text x="495" y="186" fill="#94a3b8" font-size="11" text-anchor="middle">Sondes Pitot, incidence (α), accéléromètres</text>
+
+          <path d="M 772 105 L 772 172 L 635 172" fill="none" stroke="#4ade80" stroke-width="2" marker-end="url(#arrow-green)" />
+          <path d="M 360 172 L 332 172 L 332 110" fill="none" stroke="#4ade80" stroke-width="2" marker-end="url(#arrow-green)" />
+        </svg>
+        <p class="diagram-caption">Architecture simplifiée d'une boucle fermée de commandes de vol électriques numériques sur Airbus A320.</p>
+      </div>
+
+      <p>Clique sur chaque étape ci-dessous pour inspecter le rôle technique de chaque composant :</p>
+      <div class="chain-steps">
+        <button class="step-btn active" onclick="showStep(0, this)">
+          <strong>1. Mini-manche</strong>
+          <span>Capteurs de position</span>
+        </button>
+        <button class="step-btn" onclick="showStep(1, this)">
+          <strong>2. Calculateurs</strong>
+          <span>ELAC & SEC (Redondance)</span>
+        </button>
+        <button class="step-btn" onclick="showStep(2, this)">
+          <strong>3. Servocommandes</strong>
+          <span>Électro-hydraulique</span>
+        </button>
+        <button class="step-btn" onclick="showStep(3, this)">
+          <strong>4. Capteurs & Retour</strong>
+          <span>Boucle fermée (ADIRU)</span>
+        </button>
+      </div>
+      <div class="step-detail" id="stepDetail">
+        <strong>1. Le mini-manche latéral (Sidestick) :</strong> Contrairement au manche traditionnel qui commande directement le braquage d'une gouverne, le mini-manche traduit l'action du pilote en signaux électriques proportionnels à un facteur de charge souhaité (en tangage) ou à un taux de roulis. Lorsque le pilote relâche le manche, l'avion maintient automatiquement sa trajectoire (stabilité neutre apparente).
+      </div>
+
+      <h3>Sûreté de fonctionnement : redondance et lois dégradées</h3>
+      <p>
+        Pour atteindre un taux de défaillance catastrophique inférieur à 10<sup>-9</sup> par heure de vol exigé par la certification aéronautique, l'Airbus A320 repose sur une <strong>redondance dissemblable</strong>. Cinq calculateurs principaux se partagent les commandes : <strong>2 ELAC</strong> (<em>Elevator Aileron Computer</em>) et <strong>3 SEC</strong> (<em>Spoiler Elevator Computer</em>), conçus avec des processeurs et des logiciels développés par des équipes distinctes afin d'éliminer tout risque de bogue commun. En cas de perte de certains capteurs ou calculateurs, le système bascule progressivement de la <strong>Normal Law</strong> (protections complètes) vers l'<strong>Alternate Law</strong>, puis la <strong>Direct Law</strong> (braquage proportionnel au manche, sans protection), garantissant toujours le contrôle de l'appareil.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Critère technique</th>
+              <th>Commandes Mécaniques / Classiques</th>
+              <th>Fly-by-Wire Numérique (Airbus A320)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Transmission de l'ordre</strong></td>
+              <td>Câbles d'acier, poulies, bielles et renvois</td>
+              <td>Faisceaux électriques numériques redondants</td>
+            </tr>
+            <tr>
+              <td><strong>Nature de la commande</strong></td>
+              <td>Braquage direct de gouverne (effort variable)</td>
+              <td>Consigne de facteur de charge (<em>n<sub>z</sub></em>) et taux de roulis</td>
+            </tr>
+            <tr>
+              <td><strong>Protection domaine de vol</strong></td>
+              <td>Aucune (alarmes sonores uniquement)</td>
+              <td>Active : limitation d'incidence ($lpha$), de <em>n<sub>z</sub></em>, de vitesse et d'inclinaison</td>
+            </tr>
+            <tr>
+              <td><strong>Compensateur (Trim)</strong></td>
+              <td>Réglé manuellement par le pilote à chaque changement de vitesse</td>
+              <td>Auto-trim automatique géré en permanence par les calculateurs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 03. SIMULATEUR COMPARATIF -->
+    <section id="simulateur">
+      <span class="sec-num">03 / EXPÉRIMENTATION INTERACTIVE</span>
+      <h2>Banc d'essai en vol : Commandes Mécaniques vs Fly-by-Wire</h2>
+      <p>
+        Pour visualiser concrètement l'apport des lois de pilotage de l'Airbus A320, ce simulateur compare le comportement de deux avions sur un horizon artificiel (<em>Primary Flight Display</em>). Bascule d'un mode à l'autre et teste un cabrage maximal ou une rafale brutale.
+      </p>
+
+      <div class="sim-wrapper">
+        <div class="mode-switch">
+          <button id="btnMech" class="mode-btn active-mech" onclick="setMode('mech')">
+            Mode A : Commandes Mécaniques (Sans FBW)
+          </button>
+          <button id="btnFbw" class="mode-btn" onclick="setMode('fbw')">
+            Mode B : Airbus A320 Fly-by-Wire (Normal Law)
+          </button>
+        </div>
+
+        <div class="sim-grid">
+          <div>
+            <canvas id="pfdCanvas" width="430" height="350"></canvas>
+          </div>
+
+          <div class="controls">
+            <label>
+              <span>Action manche — Tangage (Cabrer / Piquer)</span>
+              <span id="pitchVal">0%</span>
+            </label>
+            <input type="range" id="pitchSlider" min="-100" max="100" value="0" />
+
+            <label>
+              <span>Action manche — Roulis (Gauche / Droite)</span>
+              <span id="rollVal">0%</span>
+            </label>
+            <input type="range" id="rollSlider" min="-100" max="100" value="0" />
+
+            <div class="action-btns">
+              <button class="btn-small" onclick="resetStick()">Centrer le manche</button>
+              <button class="btn-small btn-gust" onclick="triggerGust()">Simuler rafale + cabrage réflexe</button>
+            </div>
+
+            <div class="telemetry">
+              <div class="telem-box">
+                <span>Incidence (α)</span>
+                <strong id="aoaDisp">2.5°</strong>
+              </div>
+              <div class="telem-box">
+                <span>Facteur charge (nz)</span>
+                <strong id="gDisp">1.00 g</strong>
+              </div>
+              <div class="telem-box">
+                <span>Inclinaison (φ)</span>
+                <strong id="bankDisp">0°</strong>
+              </div>
+            </div>
+
+            <div id="statusBanner" class="status-banner danger">
+              COMMANDES DIRECTES : Aucune protection active. Attention au décrochage (α > 15°) ou à la surcharge (> 2.5g).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. JUSTIFICATION DU CHOIX -->
+    <section id="choix">
+      <span class="sec-num">04 / DÉMARCHE PERSONNELLE</span>
+      <h2>Pourquoi avoir choisi cette innovation ?</h2>
+      <div class="quote-card">
+        <p>
+          J'ai choisi les commandes de vol électriques numériques de l'Airbus A320 parce qu'elles incarnent exactement ce qui m'a poussé à intégrer une école d'ingénieurs en aéronautique : le point de rencontre entre la mécanique du vol, l'automatique et l'informatique embarquée critique. Lors des premiers cours d'Aé111, j'ai été particulièrement marqué par le fait qu'un avion ne se résume pas à une cellule et à des moteurs, mais constitue un système cyber-physique complexe où le logiciel devient un organe vital du vol.
+        </p>
+        <p style="margin-bottom: 0;">
+          De plus, l'histoire de l'A320 illustre l'audace industrielle européenne : dans les années 1980, supprimer la liaison mécanique entre le pilote et les gouvernes sur un avion de transport civil suscitait de fortes réticences. Comprendre comment les ingénieurs ont su prouver la fiabilité mathématique et matérielle de ce système pour en faire le standard mondial de l'aviation moderne m'a semblé être un sujet fondateur pour ma première année à l'IPSA.
+        </p>
+      </div>
+    </section>
+
+    <!-- 05. CONTRIBUTION À L'AÉRONAUTIQUE -->
+    <section id="impact">
+      <span class="sec-num">05 / CONTRIBUTION AU DOMAINE</span>
+      <h2>Comment le Fly-by-Wire a transformé l'aviation moderne</h2>
+      <p>
+        L'introduction du <em>Fly-by-Wire</em> numérique sur l'A320 ne constitue pas une simple amélioration ergonomique du poste de pilotage : elle a profondément transformé la sécurité, l'économie et l'architecture même des avions de ligne contemporains (Airbus A330, A340, A380, A350, ainsi que les Boeing 777 et 787 qui ont ensuite adopté ce principe).
+      </p>
+
+      <div class="grid-4">
+        <div class="card">
+          <h3>1. Sécurité et enveloppe de vol</h3>
+          <p>En empêchant le décrochage (protection haute incidence) et la rupture structurale sous facteur de charge excessif, le FBW a fortement réduit les accidents liés aux pertes de contrôle en vol (LOC-I), permettant au pilote de tirer le manche à fond lors d'un évitement d'urgence sans danger.</p>
+        </div>
+        <div class="card">
+          <h3>2. Gain de masse et carburant</h3>
+          <p>La suppression de centaines de mètres de câbles, poulies, guignols et compensateurs mécaniques allège l'appareil de plusieurs centaines de kilogrammes, réduisant la consommation de kérosène et les coûts de maintenance mécanique.</p>
+        </div>
+        <div class="card">
+          <h3>3. Communauté de cockpit (CCQ)</h3>
+          <p>Grâce aux lois de pilotage logicielles, un A320 de 150 places et un A380 de plus de 500 places offrent des qualités de vol quasi identiques. Un pilote peut ainsi passer d'un appareil à l'autre avec une formation de transition très courte.</p>
+        </div>
+        <div class="card">
+          <h3>4. Aérodynamique optimisée</h3>
+          <p>Les calculateurs permettent de piloter des avions à <em>stabilité statique réduite</em> (centrage plus arrière). L'empennage horizontal génère moins de déportance, ce qui diminue la traînée d'équilibrage et améliore directement la finesse de l'avion.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p><strong>IPSA Ivry — Module Aé111 (Introduction à l'aéronautique et au spatial)</strong></p>
+      <p>Travail personnel intermédiaire • Présentation interactive hébergée sur GitHub Pages</p>
+    </footer>
+  </main>
+
+  <script>
+    // 1. Chaîne interactive (Section 02)
+    const stepsData = [
+      "<strong>1. Le mini-manche latéral (Sidestick) :</strong> Contrairement au manche traditionnel qui commande directement le braquage d'une gouverne, le mini-manche traduit l'action du pilote en signaux électriques proportionnels à un facteur de charge souhaité (en tangage) ou à un taux de roulis. Lorsque le pilote relâche le manche, l'avion maintient automatiquement sa trajectoire (stabilité neutre apparente).",
+      "<strong>2. Les calculateurs redondants (ELAC & SEC) :</strong> Le cerveau du système. Sur A320, 2 calculateurs ELAC (Elevator Aileron Computer) et 3 SEC (Spoiler Elevator Computer) analysent l'ordre du pilote et les paramètres de vol pour calculer le braquage optimal tout en vérifiant les limites de sécurité.",
+      "<strong>3. Les servocommandes électro-hydrauliques :</strong> Les ordres numériques sont convertis en mouvements mécaniques sur les ailerons, la gouverne de profondeur et la gouverne de direction grâce à trois circuits hydrauliques indépendants (Vert, Bleu, Jaune).",
+      "<strong>4. Les capteurs et la boucle fermée (ADIRU) :</strong> Des sondes d'incidence, tubes de Pitot et centrales inertielles mesurent en permanence l'état réel de l'avion et renvoient ces données aux calculateurs pour corriger instantanément les perturbations."
+    ];
+
+    function showStep(idx, btn) {
+      document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('stepDetail').innerHTML = stepsData[idx];
+    }
+
+    // 2. Simulateur PFD (Section 03)
+    let mode = 'mech'; // 'mech' ou 'fbw'
+    let pitch = 2.5, roll = 0, gust = 0;
+
+    const pitchSlider = document.getElementById('pitchSlider');
+    const rollSlider = document.getElementById('rollSlider');
+    const canvas = document.getElementById('pfdCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function setMode(newMode) {
+      mode = newMode;
+      document.getElementById('btnMech').className = 'mode-btn' + (mode === 'mech' ? ' active-mech' : '');
+      document.getElementById('btnFbw').className = 'mode-btn' + (mode === 'fbw' ? ' active-fbw' : '');
+    }
+
+    function resetStick() {
+      pitchSlider.value = 0;
+      rollSlider.value = 0;
+      gust = 0;
+    }
+
+    function triggerGust() {
+      gust = 15;
+      pitchSlider.value = 95;
+    }
+
+    function updateSimulation() {
+      const rawPitchInput = parseFloat(pitchSlider.value) / 100;
+      const rawRollInput = parseFloat(rollSlider.value) / 100;
+
+      document.getElementById('pitchVal').textContent = Math.round(rawPitchInput * 100) + '%';
+      document.getElementById('rollVal').textContent = Math.round(rawRollInput * 100) + '%';
+
+      gust *= 0.96;
+      if (Math.abs(gust) < 0.05) gust = 0;
+
+      let targetPitch, targetRoll;
+
+      if (mode === 'mech') {
+        targetPitch = rawPitchInput * 32 + gust;
+        targetRoll = rawRollInput * 85;
+      } else {
+        // Normal Law Airbus : limitation incidence/assiette et inclinaison max 67° (retour à 33° manche relâché)
+        let rawTargetPitch = rawPitchInput * 25 + gust * 0.35;
+        targetPitch = Math.max(-15, Math.min(22, rawTargetPitch));
+
+        let rawTargetRoll = rawRollInput * 75;
+        if (Math.abs(rawRollInput) < 0.05 && Math.abs(roll) > 33) {
+          targetRoll = Math.sign(roll) * 33;
+        } else {
+          targetRoll = Math.max(-67, Math.min(67, rawTargetRoll));
+        }
+      }
+
+      pitch += (targetPitch - pitch) * 0.1;
+      roll += (targetRoll - roll) * 0.1;
+
+      const aoa = Math.max(-5, pitch * 0.62 + gust * 0.3);
+      const nz = 1 + (pitch / 18) + (Math.abs(roll) / 65);
+
+      document.getElementById('aoaDisp').textContent = aoa.toFixed(1) + '°';
+      document.getElementById('gDisp').textContent = nz.toFixed(2) + ' g';
+      document.getElementById('bankDisp').textContent = Math.round(roll) + '°';
+
+      const banner = document.getElementById('statusBanner');
+      if (mode === 'mech') {
+        if (aoa > 15.5) {
+          banner.style = '';
+          banner.className = 'status-banner danger';
+          banner.textContent = 'ALERTE DÉCROCHAGE (STALL) : Incidence critique dépassée (α > 15.5°), perte de portance !';
+        } else if (nz > 2.5) {
+          banner.style = '';
+          banner.className = 'status-banner danger';
+          banner.textContent = 'ALERTE SURCHARGE STRUCTURALE : Facteur de charge > 2.5g dépassé !';
+        } else {
+          banner.className = 'status-banner danger';
+          banner.style.borderColor = '#fbbf24';
+          banner.style.color = '#fbbf24';
+          banner.style.background = 'rgba(251, 191, 36, 0.1)';
+          banner.textContent = 'MODE MÉCANIQUE DIRECT : Aucune protection active. Le pilote gère seul les limites.';
+        }
+      } else {
+        banner.style = '';
+        banner.className = 'status-banner';
+        const protActive = Math.abs(rawPitchInput) > 0.8 || Math.abs(rawRollInput) > 0.8 || gust > 1;
+        banner.textContent = protActive
+          ? 'NORMAL LAW • PROTECTION ACTIVE : Les calculateurs ELAC plafonnent α ≤ 14.5°, nz ≤ 2.5g et roulis ≤ 67°.'
+          : 'NORMAL LAW • STABILITÉ AUTOMATIQUE : Trajectoire maintenue et domaine de vol protégé.';
+      }
+
+      drawPFD(pitch, roll);
+      requestAnimationFrame(updateSimulation);
+    }
+
+    function drawPFD(p, r) {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate((-r * Math.PI) / 180);
+
+      const pitchPx = p * 4.5;
+
+      // Ciel et Sol
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(-w, -h * 2 + pitchPx, w * 2, h * 2);
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(-w, pitchPx, w * 2, h * 2);
+
+      // Ligne d'horizon
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(-w, pitchPx);
+      ctx.lineTo(w, pitchPx);
+      ctx.stroke();
+
+      // Échelle de tangage
+      ctx.font = '12px monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'right';
+      for (let deg = -30; deg <= 30; deg += 10) {
+        if (deg === 0) continue;
+        const y = pitchPx - deg * 4.5;
+        const lineW = deg % 20 === 0 ? 45 : 25;
+        ctx.beginPath();
+        ctx.moveTo(-lineW, y);
+        ctx.lineTo(lineW, y);
+        ctx.stroke();
+        ctx.fillText(Math.abs(deg), -lineW - 6, y + 4);
+      }
+      ctx.restore();
+
+      // Arc d'inclinaison supérieur
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 138, (-157 * Math.PI) / 180, (-23 * Math.PI) / 180);
+      ctx.stroke();
+
+      // Repères verts Airbus à ±67° si FBW actif
+      if (mode === 'fbw') {
+        ctx.strokeStyle = '#4ade80';
+        ctx.lineWidth = 3;
+        [-67, 67].forEach(lim => {
+          const rad = ((lim - 90) * Math.PI) / 180;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(rad) * 133, Math.sin(rad) * 133);
+          ctx.lineTo(Math.cos(rad) * 147, Math.sin(rad) * 147);
+          ctx.stroke();
+        });
+      }
+
+      // Maquette avion fixe centrale (jaune Airbus)
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(-55, 0); ctx.lineTo(-20, 0); ctx.lineTo(-20, 8);
+      ctx.moveTo(55, 0);  ctx.lineTo(20, 0);  ctx.lineTo(20, 8);
+      ctx.stroke();
+      ctx.strokeRect(-4, -4, 8, 8);
+      ctx.restore();
+
+      // Bandeau supérieur mode
+      ctx.fillStyle = 'rgba(9, 14, 26, 0.78)';
+      ctx.fillRect(0, 0, w, 28);
+      ctx.fillStyle = mode === 'fbw' ? '#4ade80' : '#fbbf24';
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        mode === 'fbw' ? 'A320 EIS • NORMAL LAW (PROT ACTIVE)' : 'CLASSIC SYSTEM • MECHANICAL DIRECT',
+        cx, 18
+      );
+    }
+
+    updateSimulation();
+  </script>
+</body>
+</html>
