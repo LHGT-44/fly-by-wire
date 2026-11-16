@@ -28,7 +28,6 @@
       line-height: 1.7;
     }
 
-    /* Navigation fixe */
     nav {
       position: sticky;
       top: 0;
@@ -75,14 +74,12 @@
       color: var(--cyan);
     }
 
-    /* Conteneur principal */
     main {
       max-width: 1040px;
       margin: 0 auto;
       padding: 2rem 1.5rem 5rem;
     }
 
-    /* Couverture */
     header.hero {
       padding: 4.5rem 0 3.5rem;
       border-bottom: 1px solid var(--border);
@@ -125,7 +122,6 @@
     }
     .meta-bar strong { color: var(--text); }
 
-    /* Sections */
     section {
       padding: 3.5rem 0;
       border-bottom: 1px solid var(--border);
@@ -151,7 +147,6 @@
     }
     p { margin-bottom: 1.05rem; color: #e2e8f0; }
 
-    /* Grilles et cartes */
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
@@ -177,7 +172,6 @@
     }
     .card p:last-child { margin-bottom: 0; font-size: 0.95rem; color: var(--muted); }
 
-    /* Frise chronologique compacte */
     .timeline {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -203,7 +197,6 @@
     }
     .tl-item p { font-size: 0.9rem; color: var(--muted); margin: 0; }
 
-    /* Schéma SVG d'architecture */
     .diagram-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -224,7 +217,6 @@
       margin-bottom: 0;
     }
 
-    /* Chaîne interactive de fonctionnement */
     .chain-steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -256,7 +248,6 @@
       margin-bottom: 1.75rem;
     }
 
-    /* Tableau comparatif */
     .table-wrap {
       overflow-x: auto;
       margin: 1.5rem 0;
@@ -281,7 +272,6 @@
     }
     tr:last-child td { border-bottom: none; }
 
-    /* Simulateur PFD */
     .sim-wrapper {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -403,7 +393,6 @@
       color: var(--red);
     }
 
-    /* Encadré personnel */
     .quote-card {
       background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(17, 24, 39, 0.95));
       border: 1px solid rgba(56, 189, 248, 0.3);
@@ -435,7 +424,6 @@
   </nav>
 
   <main>
-    <!-- COUVERTURE -->
     <header class="hero">
       <span class="badge">Travail Personnel Intermédiaire • Module Aé111</span>
       <h1>Les Commandes de Vol Électriques (Fly-by-Wire) et l'Airbus A320</h1>
@@ -450,7 +438,6 @@
       </div>
     </header>
 
-    <!-- 01. HISTOIRE -->
     <section id="histoire">
       <span class="sec-num">01 / CONTEXTE HISTORIQUE</span>
       <h2>De la tringlerie mécanique au premier avion de ligne numérique</h2>
@@ -481,7 +468,6 @@
       </div>
     </section>
 
-    <!-- 02. ARCHITECTURE TECHNIQUE -->
     <section id="technique">
       <span class="sec-num">02 / FONCTIONNEMENT TECHNIQUE</span>
       <h2>La chaîne de commande numérique et les lois de pilotage</h2>
@@ -489,7 +475,6 @@
         Dans un système <em>Fly-by-Wire</em> moderne, le pilote ne commande plus directement l'angle de braquage d'une surface mobile : il exprime une intention de trajectoire. Les calculateurs mesurent en temps réel l'état de l'appareil (vitesse, incidence, facteur de charge, assiette) et calculent le braquage nécessaire des gouvernes pour exécuter cet ordre tout en maintenant l'avion dans son domaine de vol sûr.
       </p>
 
-      <!-- Schéma SVG de la boucle de commande -->
       <div class="diagram-box">
         <svg viewBox="0 0 860 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schéma de la boucle Fly-by-Wire Airbus A320">
           <defs>
@@ -501,7 +486,6 @@
             </marker>
           </defs>
 
-          <!-- Blocs principaux -->
           <rect x="20" y="30" width="165" height="75" rx="8" fill="#1a2438" stroke="#38bdf8" stroke-width="2" />
           <text x="102" y="60" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">1. MINI-MANCHE</text>
           <text x="102" y="80" fill="#cbd5e1" font-size="11" text-anchor="middle">Capteurs inductifs (RVDT)</text>
@@ -519,12 +503,10 @@
           <text x="772" y="60" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">4. GOUVERNES</text>
           <text x="772" y="80" fill="#cbd5e1" font-size="11" text-anchor="middle">Ailerons, Profondeur</text>
 
-          <!-- Flèches directes -->
           <line x1="185" y1="67" x2="230" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
           <line x1="430" y1="67" x2="475" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
           <line x1="655" y1="67" x2="700" y2="67" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
 
-          <!-- Boucle de retour (Capteurs ADIRU) -->
           <rect x="360" y="145" width="270" height="55" rx="8" fill="#111827" stroke="#4ade80" stroke-width="1.8" />
           <text x="495" y="168" fill="#4ade80" font-size="12" font-weight="bold" text-anchor="middle">5. CAPTEURS & CENTRALE ADIRU</text>
           <text x="495" y="186" fill="#94a3b8" font-size="11" text-anchor="middle">Sondes Pitot, incidence (α), accéléromètres</text>
@@ -598,7 +580,6 @@
       </div>
     </section>
 
-    <!-- 03. SIMULATEUR COMPARATIF -->
     <section id="simulateur">
       <span class="sec-num">03 / EXPÉRIMENTATION INTERACTIVE</span>
       <h2>Banc d'essai en vol : Commandes Mécaniques vs Fly-by-Wire</h2>
@@ -676,7 +657,6 @@
       </div>
     </section>
 
-    <!-- 05. CONTRIBUTION À L'AÉRONAUTIQUE -->
     <section id="impact">
       <span class="sec-num">05 / CONTRIBUTION AU DOMAINE</span>
       <h2>Comment le Fly-by-Wire a transformé l'aviation moderne</h2>
@@ -710,7 +690,6 @@
   </main>
 
   <script>
-    // 1. Chaîne interactive (Section 02)
     const stepsData = [
       "<strong>1. Le mini-manche latéral (Sidestick) :</strong> Contrairement au manche traditionnel qui commande directement le braquage d'une gouverne, le mini-manche traduit l'action du pilote en signaux électriques proportionnels à un facteur de charge souhaité (en tangage) ou à un taux de roulis. Lorsque le pilote relâche le manche, l'avion maintient automatiquement sa trajectoire (stabilité neutre apparente).",
       "<strong>2. Les calculateurs redondants (ELAC & SEC) :</strong> Le cerveau du système. Sur A320, 2 calculateurs ELAC (Elevator Aileron Computer) et 3 SEC (Spoiler Elevator Computer) analysent l'ordre du pilote et les paramètres de vol pour calculer le braquage optimal tout en vérifiant les limites de sécurité.",
@@ -724,8 +703,7 @@
       document.getElementById('stepDetail').innerHTML = stepsData[idx];
     }
 
-    // 2. Simulateur PFD (Section 03)
-    let mode = 'mech'; // 'mech' ou 'fbw'
+    let mode = 'mech'; 
     let pitch = 2.5, roll = 0, gust = 0;
 
     const pitchSlider = document.getElementById('pitchSlider');
@@ -766,7 +744,6 @@
         targetPitch = rawPitchInput * 32 + gust;
         targetRoll = rawRollInput * 85;
       } else {
-        // Normal Law Airbus : limitation incidence/assiette et inclinaison max 67° (retour à 33° manche relâché)
         let rawTargetPitch = rawPitchInput * 25 + gust * 0.35;
         targetPitch = Math.max(-15, Math.min(22, rawTargetPitch));
 
@@ -838,13 +815,11 @@
 
       const pitchPx = p * 4.5;
 
-      // Ciel et Sol
       ctx.fillStyle = '#0284c7';
       ctx.fillRect(-w, -h * 2 + pitchPx, w * 2, h * 2);
       ctx.fillStyle = '#78350f';
       ctx.fillRect(-w, pitchPx, w * 2, h * 2);
 
-      // Ligne d'horizon
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
@@ -852,7 +827,6 @@
       ctx.lineTo(w, pitchPx);
       ctx.stroke();
 
-      // Échelle de tangage
       ctx.font = '12px monospace';
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'right';
@@ -868,7 +842,6 @@
       }
       ctx.restore();
 
-      // Arc d'inclinaison supérieur
       ctx.save();
       ctx.translate(cx, cy);
       ctx.strokeStyle = '#ffffff';
@@ -877,7 +850,6 @@
       ctx.arc(0, 0, 138, (-157 * Math.PI) / 180, (-23 * Math.PI) / 180);
       ctx.stroke();
 
-      // Repères verts Airbus à ±67° si FBW actif
       if (mode === 'fbw') {
         ctx.strokeStyle = '#4ade80';
         ctx.lineWidth = 3;
@@ -890,7 +862,6 @@
         });
       }
 
-      // Maquette avion fixe centrale (jaune Airbus)
       ctx.strokeStyle = '#fbbf24';
       ctx.lineWidth = 3.5;
       ctx.beginPath();
@@ -900,7 +871,6 @@
       ctx.strokeRect(-4, -4, 8, 8);
       ctx.restore();
 
-      // Bandeau supérieur mode
       ctx.fillStyle = 'rgba(9, 14, 26, 0.78)';
       ctx.fillRect(0, 0, w, 28);
       ctx.fillStyle = mode === 'fbw' ? '#4ade80' : '#fbbf24';
